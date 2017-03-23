@@ -1,186 +1,152 @@
 #ifndef MODUL2_LAB10_TARRAY_H
 #define MODUL2_LAB10_TARRAY_H
 
+
 #include <iostream>
 #include <exception>
+#include <initializer_list>
 
-template<typename T>
-class TArray
+template<
+        class T,
+        std::size_t N
+> class TArray
 {
 public:
     using value_type = T;
-    using size_type = size_t;
-    using iterator = value_type *;
-    using reference = value_type&;
+    using size_type	= size_t;
+    using difference_type = std::ptrdiff_t;
+    using reference	= value_type&;
     using const_reference = const value_type&;
+    using pointer = T*;
+    using const_pointer	= const T*;
+    using iterator = value_type *;
+    using const_iterator = const value_type *;
 
 
 private:
-    size_type Count;
-    size_type Capacity;
     value_type * Arr;
 public:
     TArray()
-            : Arr(nullptr)
-            , Count(0)
-            , Capacity(0)
-    { }
-
-    TArray(size_type capacity)// +
-            : Count(0)
-            , Capacity(capacity)
     {
-        Arr = new value_type[Capacity];
+        Arr = new T[N];
     }
 
-    ~TArray()// +
+    TArray(std::initializer_list<T> init)
+            : TArray()
     {
-        delete[] Arr;
+        memcpy(begin(), init.begin(), size() * sizeof(size_type));
     }
 
-    void push_back(T elem)// +
+    size_type size() const
     {
-        if(Count >= Capacity)
-            throw std::out_of_range("Out of range");
-
-        Arr[Count] = elem;
-        Count++;
+        return N;
     }
 
-    TArray(const TArray &rhs)// +
+    size_type max_size() const
     {
-        Capacity = rhs.Capacity;
-        Arr = new value_type[Capacity];
-        memcpy(Arr, rhs.Arr, rhs.Count * sizeof(size_type));
+        return std::distance(cbegin(), cend());
     }
 
-    TArray &operator = (const TArray &rhs)// +
+    bool empty() const throw()
     {
-        if (this == &rhs)
-            return *this;
-
-        memcpy(Arr, rhs.Arr, rhs.Count * sizeof(size_type));
-        Count = rhs.Count;
-
-        return *this;
+        return size() == 0;
     }
 
-    iterator begin() const throw()
+    iterator begin() throw()
     {
         return Arr;
     }
 
-    iterator end() const throw()
+    iterator end() throw()
     {
-        return Arr + Count;
+        return Arr + N;
     }
 
-    reference at(size_type index)
+    const_iterator cbegin() const throw()
     {
-        if (index < 0 || index >= Count)
+        return Arr;
+    }
+
+    const_iterator cend() const throw()
+    {
+        return Arr + N;
+    }
+
+    reference at(size_type pos)
+    {
+        if (pos < 0 || pos >= size())
         {
             throw std::out_of_range("Out of range");
         }
 
-        return Arr[index];
+        return Arr[pos];
     }
 
-    value_type at(size_type index) const
+    const_reference at( size_type pos ) const
     {
-        if (index < 0 || index >= Count)
+        if (pos < 0 || pos >= size())
         {
             throw std::out_of_range("Out of range");
         }
 
-        return Arr[index];
+        return Arr[pos];
     }
 
-    reference operator[](size_type index)
+    reference operator[](size_type pos)
     {
-        return Arr[index];
+        return Arr[pos];
     }
 
-    const_reference operator[](size_type index) const
+    const_reference operator[]( size_type pos ) const
     {
-        return Arr[index];
+        return Arr[pos];
     }
 
     reference front()
     {
-        if (Arr == nullptr)
-        {
-            throw std::out_of_range("Out of range");
-        }
-
         return Arr[0];
     }
 
     const_reference front() const
     {
-        if (Arr == nullptr)
-        {
-            throw std::out_of_range("Out of range");
-        }
-
         return Arr[0];
     }
 
     reference back()
     {
-        if (Arr == nullptr)
-        {
-            throw std::out_of_range("Out of range");
-        }
-
-        return Arr[Count - 1];
+        return Arr[N - 1];
     }
 
     const_reference back() const
     {
-        if (Arr == nullptr)
-        {
-            throw std::out_of_range("Out of range");
-        }
-
-        return Arr[Count - 1];
+        return Arr[N - 1];
     }
 
-    void swap(TArray& other) throw()
+    pointer data() throw()
+    {
+        return Arr;
+    }
+
+    const_pointer data() const throw()
+    {
+        return Arr;
+    }
+
+    void fill( const reference value )
+    {
+        for(size_type i = 0; i < size(); ++i)
+            Arr[i] = value;
+    }
+
+    void swap( TArray<T,N>& other )
     {
         std::swap(Arr, other.Arr);
-        std::swap(Count, other.Count);
-        std::swap(Capacity, other.Capacity);
-    }
-
-    bool Empty()// +
-    {
-        return size() == 0;
-    }
-
-    size_type size() const// +
-    {
-        return Count;
-    }
-
-    size_type capacity() const// +
-    {
-        return Capacity;
-    }
-
-    void fill(int index, size_type value)
-    {
-        Arr[index] = value;
-    }
-
-    value_type get(int index) const
-    {
-        return Arr[index];
     }
 
     friend std::ostream &operator <<(std::ostream &out , TArray const &obj)
     {
         out << "{ ";
-        for(int i = 0; i < obj.Capacity; ++i)
+        for(int i = 0; i < obj.size(); ++i)
             out << obj.Arr[i] << " ";
         out << "}";
 
