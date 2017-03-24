@@ -9,9 +9,9 @@
 template<
         class T,
         std::size_t N
-> class TArray
+> struct TArray
 {
-public:
+    // using
     using value_type = T;
     using size_type	= size_t;
     using reference	= value_type&;
@@ -21,10 +21,10 @@ public:
     using iterator = value_type *;
     using const_iterator = const value_type *;
 
-
-private:
+    // Data
     value_type * Arr;
-public:
+        
+    // Func
     TArray()
     {
         Arr = new T[N];
