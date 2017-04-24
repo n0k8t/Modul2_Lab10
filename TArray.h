@@ -33,7 +33,7 @@ public:
         int  i = 0;
         for(auto & v : init)
         {
-           arr[i] = v;
+           Ptr[i] = v;
            i++;
         }                    
     }
