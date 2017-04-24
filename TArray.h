@@ -11,7 +11,7 @@ template<
         std::size_t N
 > struct TArray
 {
-    // using
+public:
     using value_type = T;
     using size_type	= size_t;
     using reference	= value_type&;
@@ -20,20 +20,22 @@ template<
     using const_pointer	= const T*;
     using iterator = value_type *;
     using const_iterator = const value_type *;
+    value_type Ptr[N];
 
-    // Data
-    value_type * Arr;
-        
-    // Func
-    TArray()
-    {
-        Arr = new T[N];
-    }
+public:
+    TArray() = default;
+    ~TArray() = default;
 
     TArray(std::initializer_list<T> init)
             : TArray()
     {
-        memcpy(begin(), init.begin(), size() * sizeof(size_type));
+        //memcpy(begin(), init.begin(), size() * sizeof(size_type));        
+        int  i = 0;
+        for(auto & v : init)
+        {
+           arr[i] = v;
+           i++;
+        }                    
     }
 
     size_type size() const
@@ -43,7 +45,7 @@ template<
 
     size_type max_size() const
     {
-        return std::distance(cbegin(), cend());
+        return N;
     }
 
     bool empty() const throw()
@@ -53,22 +55,22 @@ template<
 
     iterator begin() throw()
     {
-        return Arr;
+        return Ptr;
     }
 
     iterator end() throw()
     {
-        return Arr + N;
+        return Ptr + N;
     }
 
     const_iterator cbegin() const throw()
     {
-        return Arr;
+        return Ptr;
     }
 
     const_iterator cend() const throw()
     {
-        return Arr + N;
+        return Ptr + N;
     }
 
     reference at(size_type pos)
@@ -78,7 +80,7 @@ template<
             throw std::out_of_range("Out of range");
         }
 
-        return Arr[pos];
+        return Ptr[pos];
     }
 
     const_reference at( size_type pos ) const
@@ -88,65 +90,65 @@ template<
             throw std::out_of_range("Out of range");
         }
 
-        return Arr[pos];
+        return Ptr[pos];
     }
 
     reference operator[](size_type pos)
     {
-        return Arr[pos];
+        return Ptr[pos];
     }
 
     const_reference operator[]( size_type pos ) const
     {
-        return Arr[pos];
+        return Ptr[pos];
     }
 
     reference front()
     {
-        return Arr[0];
+        return Ptr[0];
     }
 
     const_reference front() const
     {
-        return Arr[0];
+        return Ptr[0];
     }
 
     reference back()
     {
-        return Arr[N - 1];
+        return Ptr[N - 1];
     }
 
     const_reference back() const
     {
-        return Arr[N - 1];
+        return Ptr[N - 1];
     }
 
     pointer data() throw()
     {
-        return Arr;
+        return Ptr;
     }
 
     const_pointer data() const throw()
     {
-        return Arr;
+        return Ptr;
     }
 
     void fill( const reference value )
     {
         for(size_type i = 0; i < size(); ++i)
-            Arr[i] = value;
+            Ptr[i] = value;
     }
 
     void swap( TArray<T,N>& other )
     {
-        std::swap(Arr, other.Arr);
+        std::swap(Ptr, other.Ptr);
     }
 
     friend std::ostream &operator <<(std::ostream &out , TArray const &obj)
     {
         out << "{ ";
         for(int i = 0; i < obj.size(); ++i)
-            out << obj.Arr[i] << " ";
+            out << obj.Ptr[i] << " ";
         out << "}";
 
         return out;
